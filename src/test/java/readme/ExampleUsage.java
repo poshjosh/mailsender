@@ -3,9 +3,15 @@ package readme;
 import com.looseboxes.fileclient.FileHandler;
 import com.looseboxes.fileclient.LocalFileHandler;
 import com.looseboxes.gmailapi.MessageUtil;
-import com.looseboxes.mailsender.config.GmailProperties;
+import com.looseboxes.gmailapi.config.Api;
+import com.looseboxes.gmailapi.config.GmailConfig;
+import com.looseboxes.gmailapi.config.OAuth2;
 import com.looseboxes.mailsender.MailSender;
 import com.looseboxes.mailsender.google.MailSenderGmail;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import javax.mail.MessagingException;
 
@@ -16,27 +22,25 @@ public class ExampleUsage {
     
     public static void main(String[] args) {
         
-        final String appName = "";
-        final String credentialsFilePath = "";
-        final String tokensDirectoryPath = "";
-        
+        final String appName = "MyApp";
+
         FileHandler fileHandler = new LocalFileHandler();
-        
-        GmailProperties props = new GmailProperties();
-        props.setAccessTokenScopes(Arrays.asList("https://www.googleapis.com/auth/gmail.send"));
-        props.setCredentialsFilePath(credentialsFilePath);
-        props.setTokensDirectoryPath(tokensDirectoryPath);
-        
-        MailSender mailSender = new MailSenderGmail(appName, fileHandler, props);
-        
-        final String to = "";
-        final String from = "";
-        final String subject = "";
-        final String bodyText = "";
+
+        Path dir = Paths.get(System.getProperty("user.home"), ".webstore", "config", "gmail");
+        GmailConfig gmailConfig = new GmailConfig()
+                .api(new Api().credentialsFilePath(dir.resolve("client.json").toString()).tokensDirectoryPath(dir.toString()))
+                .oAuth2(new OAuth2().accessTokenScopes(Arrays.asList("https://www.googleapis.com/auth/gmail.send")));
+
+        MailSender mailSender = new MailSenderGmail(appName, fileHandler, gmailConfig);
+
+        final String from = "noreply@herobids.com";
+        final String to = "posh.bc@gmail.com";
+        final String subject = "Subject " + LocalDateTime.now();
+        final String content = "Message " + LocalDateTime.now();
         
         try{
             
-            mailSender.send(MessageUtil.createEmail(to, from, subject, bodyText));
+            mailSender.send(MessageUtil.createEmail(to, from, subject, content));
             
         }catch(MessagingException e) {
             e.printStackTrace();

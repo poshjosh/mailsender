@@ -4,10 +4,11 @@ import com.looseboxes.fileclient.FileHandler;
 import com.looseboxes.gmailapi.GmailFactory;
 import com.looseboxes.gmailapi.GmailFactoryImpl;
 import com.looseboxes.gmailapi.MailException;
-import com.looseboxes.mailsender.config.GmailProperties;
+import com.looseboxes.gmailapi.config.GmailConfig;
 import com.looseboxes.mailsender.MailSender;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -18,8 +19,8 @@ public class MailSenderGmail implements MailSender{
    
     private final GmailFactory gmailFactory;
     
-    public MailSenderGmail(String appName, FileHandler fileHandler, GmailProperties props) {
-        this(new GmailFactoryImpl(appName, new GmailConfigImpl(fileHandler, props)));
+    public MailSenderGmail(String appName, FileHandler fileHandler, GmailConfig gmailConfig) {
+        this(new GmailFactoryImpl(appName, new GmailConfigImpl(fileHandler, gmailConfig)));
     }
 
     public MailSenderGmail(GmailFactory gmailFactory) {
